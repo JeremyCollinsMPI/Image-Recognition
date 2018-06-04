@@ -31,7 +31,7 @@ def replist(x,y):
 	return new
 
 def main(unused_argv):
-  # Load training and eval data
+# Load data
   mnist = tf.contrib.learn.datasets.load_dataset("mnist")
   train_data = mnist.train.images  # Returns np.array
   train_labels = np.asarray(mnist.train.labels, dtype=np.int32)  
@@ -152,7 +152,7 @@ def main(unused_argv):
   classes = {}
   for number in xrange(10):
   	classes[number] = [x for x in xrange(len(train_labels)) if train_labels[x] == number]
-  
+  	
   def showClass(number):
   	 return(classes[number])
 
