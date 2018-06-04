@@ -217,14 +217,14 @@ def main(unused_argv):
 # example image and classification  	
   print(classify1and2(252,training_data_size)[0])
 
-# testing 100 images, with training data of ten randomly sampled images
+# testing 100 images
   
   result = []
   for i in range(300,400):
   	result.append(train_labels[i]==classify1and2(i, training_data_size)[0])
   	print(len(result))
   	print(len([x for x in result if x == True])/len(result))
-  print(len([x for x in result if x == True])/len(result))
+  print('Percentage correct: ' + str(len([x for x in result if x == True])/len(result)*100))
 
 
 if __name__ == "__main__":
