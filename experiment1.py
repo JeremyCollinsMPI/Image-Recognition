@@ -149,8 +149,12 @@ def main(unused_argv):
 		  i = i + 1
 	  return [[current, currentParameters[0], currentParameters[1], currentParameters[2], currentParameters[3]]]
 
+  classes = {}
+  for number in xrange(10):
+  	classes[number] = [x for x in xrange(len(train_labels)) if train_labels[x] == number]
+  
   def showClass(number):
-  	 return([x for x in xrange(len(train_labels)) if train_labels[x] == number])
+  	 return(classes[number])
 
   def tryAgainstRandomExample(imageNumber1, x):
   	imageNumber2 = random.sample(showClass(x),1)[0]
