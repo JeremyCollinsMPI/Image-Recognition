@@ -30,15 +30,10 @@ def replist(x,y):
 		new.append(copy(x))
 	return new
 
-	
-
 def main(unused_argv):
   # Load training and eval data
   mnist = tf.contrib.learn.datasets.load_dataset("mnist")
   train_data = mnist.train.images  # Returns np.array
-  
-  n = 24
-
   train_labels = np.asarray(mnist.train.labels, dtype=np.int32)  
   
   def show(number):
@@ -47,7 +42,6 @@ def main(unused_argv):
   	img = Image.new('1',(28,28))
   	img.putdata(x)
   	img.show()
-
 
   def findError(imageNumber1, imageNumber2, a, b):
   	first = train_data[imageNumber1]
@@ -135,18 +129,22 @@ def main(unused_argv):
 
   def showClass(number):
   	 return([x for x in xrange(len(train_labels)) if train_labels[x] == number])
+
   def tryAgainstRandomExample(imageNumber1, x):
   	imageNumber2 = random.sample(showClass(x),1)[0]
   	temp = tryOut(imageNumber1, imageNumber2)
   	return temp[-1][0]
+
   def tryAgainstRandomExample2(imageNumber1, x):
   	imageNumber2 = random.sample(showClass(x),1)[0]
   	temp = tryOut2(imageNumber1, imageNumber2)
   	return temp[-1][0]
+
   def tryAgainstRandomExample3(imageNumber1, x):
   	imageNumber2 = random.sample(showClass(x),1)[0]
   	temp = tryOut3(imageNumber1, imageNumber2)
   	return temp[-1][0]
+
   def classify(imageNumber1, trainingExamples = 1):
   	show(imageNumber1)
   	results = []
@@ -163,6 +161,7 @@ def main(unused_argv):
 		total = total - numericalStability
   		results.append(total)
   	return results.index(max(results)), results	
+
   def classify2(imageNumber1, trainingExamples = 1):
   	show(imageNumber1)
   	results = []
@@ -179,6 +178,7 @@ def main(unused_argv):
 		total = total - numericalStability
   		results.append(total)
   	return results.index(max(results)), results
+
   def classify1and2(imageNumber1, trainingExamples = 1):
 	show(imageNumber1)
 	results = []
@@ -193,6 +193,7 @@ def main(unused_argv):
 			intermediateResults.append(y)
 		results.append(max(intermediateResults))
 	return results.index(max(results)), results
+
   def classify3(imageNumber1, trainingExamples = 1):
   	show(imageNumber1)
   	results = []
