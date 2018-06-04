@@ -127,6 +127,28 @@ def main(unused_argv):
 	  result = sorted(result, key = lambda x: x[0])
 	  return result
 
+  def tryOut2MaximumLikelihood(imageNumber1, imageNumber2):
+	  result = []
+	  a = -3
+	  b = -3
+	  c = -3
+	  d = -3
+	  chainLength = 5
+	  currentParameters = [0,0,0,0]
+	  i = 0
+	  previous = -10000000
+	  while i < chainLength:	  
+		  newParameters = copy(currentParameters)		  
+		  coinToss1 = random.sample([0,1,2,3],1)[0]
+		  coinToss2 = random.sample([-1,1],1)[0]
+		  newParameters[coinToss1] = max(min(newParameters[coinToss1] + coinToss2, 3), -3)	  
+		  current = findError2(imageNumber1, imageNumber2, newParameters[0], newParameters[1], newParameters[2], newParameters[3])
+		  if current > previous:
+		  	currentParameters = copy(newParameters)
+		  	previous = current
+		  i = i + 1
+	  return [[current, currentParameters[0], currentParameters[1], currentParameters[2], currentParameters[3]]]
+
   def showClass(number):
   	 return([x for x in xrange(len(train_labels)) if train_labels[x] == number])
 
@@ -140,13 +162,17 @@ def main(unused_argv):
   	temp = tryOut2(imageNumber1, imageNumber2)
   	return temp[-1][0]
 
+  def tryAgainstRandomExample2MaximumLikelihood(imageNumber1, x):
+  	imageNumber2 = random.sample(showClass(x),1)[0]
+  	temp = tryOut2MaximumLikelihood(imageNumber1, imageNumber2)
+  	return temp[-1][0]
+
   def tryAgainstRandomExample3(imageNumber1, x):
   	imageNumber2 = random.sample(showClass(x),1)[0]
   	temp = tryOut3(imageNumber1, imageNumber2)
   	return temp[-1][0]
 
   def classify(imageNumber1, trainingExamples = 1):
-  	show(imageNumber1)
   	results = []
   	numericalStability = 200
   	for x in range(0,10):
@@ -163,7 +189,6 @@ def main(unused_argv):
   	return results.index(max(results)), results	
 
   def classify2(imageNumber1, trainingExamples = 1):
-  	show(imageNumber1)
   	results = []
   	numericalStability = 200
   	for x in range(0,10):
@@ -180,7 +205,6 @@ def main(unused_argv):
   	return results.index(max(results)), results
 
   def classify1and2(imageNumber1, trainingExamples = 1):
-	show(imageNumber1)
 	results = []
 	numericalStability = 200
 	for x in range(0,10):
@@ -194,8 +218,21 @@ def main(unused_argv):
 		results.append(max(intermediateResults))
 	return results.index(max(results)), results
 
+  def classify1and2MaximumLikelihood(imageNumber1, trainingExamples = 1):
+	results = []
+	numericalStability = 200
+	for x in range(0,10):
+		intermediateResults = []
+		total = 0
+		for i in xrange(trainingExamples):
+			y = tryAgainstRandomExample(imageNumber1, x)
+			y2 = tryAgainstRandomExample2MaximumLikelihood(imageNumber1, x)
+			y = max(y, y2)
+			intermediateResults.append(y)
+		results.append(max(intermediateResults))
+	return results.index(max(results)), results
+	
   def classify3(imageNumber1, trainingExamples = 1):
-  	show(imageNumber1)
   	results = []
   	numericalStability = 200
   	for x in range(0,10):
@@ -212,10 +249,12 @@ def main(unused_argv):
   	return results.index(max(results)), results
 
 # set training data size
-  training_data_size = 20 
+  training_data_size = 10
 
-# example image and classification  	
-  print(classify1and2(252,training_data_size)[0])
+# example image and classification, e.g. image 252  
+  image_number = 252
+  show(image_number)	
+  print(classify1and2MaximumLikelihood(image_number,training_data_size)[0])
 
 # testing 100 images
   
@@ -224,7 +263,7 @@ def main(unused_argv):
   	result.append(train_labels[i]==classify1and2(i, training_data_size)[0])
   	print(len(result))
   	print(len([x for x in result if x == True])/len(result))
-  print('Percentage correct: ' + str(len([x for x in result if x == True])/len(result)*100))
+  print(len([x for x in result if x == True])/len(result))
 
 
 if __name__ == "__main__":
