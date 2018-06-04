@@ -211,13 +211,17 @@ def main(unused_argv):
   		results.append(total)
   	return results.index(max(results)), results
 
+# set training data size
+  training_data_size = 20 
+
 # example image and classification  	
-  print(classify1and2(252,3)[0])
+  print(classify1and2(252,training_data_size)[0])
 
 # testing 100 images, with training data of ten randomly sampled images
+  
   result = []
   for i in range(300,400):
-  	result.append(train_labels[i]==classify1and2(i, 10)[0])
+  	result.append(train_labels[i]==classify1and2(i, training_data_size)[0])
   	print(len(result))
   	print(len([x for x in result if x == True])/len(result))
   print(len([x for x in result if x == True])/len(result))
