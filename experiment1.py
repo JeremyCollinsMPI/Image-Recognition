@@ -20,7 +20,7 @@ training_data_size = 10
 chain_length = 700
 
 # set christmas sampling length
-christmas_sampling_length = 20
+christmas_sampling_length = 10
 
 # Load data
 mnist = tf.contrib.learn.datasets.load_dataset("mnist")
@@ -118,6 +118,24 @@ def tryOut2Pure(image1, image2):
   result = sorted(result, key = lambda x: x[0])
   return result
 
+def tryOut2Pure(image1, image2):	
+  result = []
+  c = 0
+  d = 0
+  for a in range(-3,3):
+	for b in range(-3,3):
+		result.append([findError2Pure(image1, image2, a, b, c, d), a, b, c, d])
+  result = sorted(result, key = lambda x: x[0])
+  best = result[-1]
+  a = best[1]
+  b = best[2]
+  result = []
+  for c in range(-3,3):
+  	for d in range(-3,3):
+  		result.append([findError2Pure(image1, image2, a, b, c, d), a, b, c, d])
+  result = sorted(result, key = lambda x: x[0])
+  return result
+  
 def tryOut3(imageNumber1, imageNumber2):	
   result = []
   for a in range(-1,1):
@@ -207,55 +225,53 @@ def tryOut2ChristmasSamplingPure(image1, image2):
   return [[current, currentParameters[0], currentParameters[1], currentParameters[2], currentParameters[3]]]
 
 def tryOut2ChristmasSamplingPure(image1, image2):
-  result = []
-  chainLength = christmas_sampling_length
-  currentParameters = [0,0,0,0]
-  temp1 = []
-  for m in range(-3,3):
-  	currentParameters[0] = m
-  	temp2 = []
-	for m2 in range(-3,3):
-		currentParameters[1] = m2
-		for i in xrange(chainLength):	
-			for n in range(2,4):
-				currentParameters[n] = random.sample(range(-3,3),1)[0]
-		temp2.append(findError2Pure(image1, image2, currentParameters[0], currentParameters[1], currentParameters[2], currentParameters[3]))
-	temp1.append([currentParameters[0],max(temp2)])
-  temp1 = sorted(temp1, key = lambda x : x[1], reverse = True)
-  currentParameters[0] = temp1[0][0]
-  temp1 = []
-  for m in range(-3,3):
-  	currentParameters[1] = m
-  	temp2 = []
-  	for m2 in range(-3,3):
-		currentParameters[2] = m2		
-		for i in xrange(chainLength):
-			for n in range(3,4):
-				currentParameters[n] = random.sample(range(-3,3),1)[0]
+	result = []
+	chainLength = christmas_sampling_length
+	currentParameters = [0,0,0,0]
+	for n in range(2,4):
+		currentParameters[n] = random.sample(range(-3,3),1)[0]
+	for i in xrange(chainLength):
+		temp1 = [] 	
+		for m in range(-3,3):
+			currentParameters[0] = m
+			temp2 = []
+			for m2 in range(-3,3):
+				currentParameters[1] = m2
+				temp2.append(findError2Pure(image1, image2, currentParameters[0], currentParameters[1], currentParameters[2], currentParameters[3]))
+			temp1.append([currentParameters[0],max(temp2)])
+		temp1 = sorted(temp1, key = lambda x : x[1], reverse = True)
+		currentParameters[0] = temp1[0][0]
+		temp1 = []
+		for m in range(-3,3):
+			currentParameters[1] = m
+			temp2 = []
+			for m2 in range(-3,3):
+				currentParameters[2] = m2		
+				temp2.append(findError2Pure(image1, image2, currentParameters[0], currentParameters[1], currentParameters[2], currentParameters[3]))
+			temp1.append([currentParameters[1],max(temp2)])
+		temp1 = sorted(temp1, key = lambda x : x[1], reverse = True)
+		currentParameters[1] = temp1[0][0]
+		temp1 = []
+		for m in range(-3,3):
+			currentParameters[2] = m
+			temp2 = []
+			for m2 in range(-3,3):
+				currentParameters[3] = m2
+				temp2.append(findError2Pure(image1, image2, currentParameters[0], currentParameters[1], currentParameters[2], currentParameters[3]))
+			temp1.append([currentParameters[1],max(temp2)])
+		temp1 = sorted(temp1, key = lambda x : x[1], reverse = True)
+		currentParameters[2] = temp1[0][0]  
+		temp1 = []
+		for m in range(-3,3):
+			currentParameters[3] = m
+			temp2 = []
 			temp2.append(findError2Pure(image1, image2, currentParameters[0], currentParameters[1], currentParameters[2], currentParameters[3]))
-	temp1.append([currentParameters[1],max(temp2)])
-  temp1 = sorted(temp1, key = lambda x : x[1], reverse = True)
-  currentParameters[1] = temp1[0][0]
-  temp1 = []
-  for m in range(-3,3):
-  	currentParameters[2] = m
-  	temp2 = []
-  	for m2 in range(-3,3):
-  		currentParameters[3] = m2
-		temp2.append(findError2Pure(image1, image2, currentParameters[0], currentParameters[1], currentParameters[2], currentParameters[3]))
-	temp1.append([currentParameters[1],max(temp2)])
-  temp1 = sorted(temp1, key = lambda x : x[1], reverse = True)
-  currentParameters[2] = temp1[0][0]  
-  temp1 = []
-  for m in range(-3,3):
-  	currentParameters[3] = m
-  	temp2 = []
-	temp2.append(findError2Pure(image1, image2, currentParameters[0], currentParameters[1], currentParameters[2], currentParameters[3]))
-	temp1.append([currentParameters[1],max(temp2)])
-  temp1 = sorted(temp1, key = lambda x : x[1], reverse = True)
-  currentParameters[3] = temp1[0][0]  
-  current = findError2Pure(image1, image2, currentParameters[0], currentParameters[1], currentParameters[2], currentParameters[3])
-  return [[current, currentParameters[0], currentParameters[1], currentParameters[2], currentParameters[3]]]
+			temp1.append([currentParameters[1],max(temp2)])
+		temp1 = sorted(temp1, key = lambda x : x[1], reverse = True)
+# 		print(temp1)
+		currentParameters[3] = temp1[0][0]  
+	current = findError2Pure(image1, image2, currentParameters[0], currentParameters[1], currentParameters[2], currentParameters[3])
+	return [[current, currentParameters[0], currentParameters[1], currentParameters[2], currentParameters[3]]]
 
 classes = {}
 for number in xrange(10):
@@ -359,7 +375,7 @@ def main(unused_argv):
 # example image and classification, e.g. image 252  
   image_number = 252
   show(image_number)	
-  print(classify1and2ChristmasSamplingPure(image_number,training_data_size)[0])
+  print(classify1and2Pure(image_number,training_data_size)[0])
 # testing 100 images
   result = []
   for i in range(400,500):
