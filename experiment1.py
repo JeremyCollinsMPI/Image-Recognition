@@ -108,12 +108,12 @@ def showClass(number):
 	return(classes[number])
 
 def tryAgainstRandomExample(image1, x):
-	image2 = training_images[str(x)+'_'+str(random.sample(xrange(10), 1)[0])]
+	image2 = training_images[str(x)+'_'+str(random.sample(xrange(training_data_size), 1)[0])]
 	temp = tryOut(image1, image2)
 	return temp[-1][0]
 
 def tryAgainstRandomExample2(image1, x):
-	image2 = training_images[str(x)+'_'+str(random.sample(xrange(10), 1)[0])]
+	image2 = training_images[str(x)+'_'+str(random.sample(xrange(training_data_size), 1)[0])]
 	temp = tryOut2(image1, image2)
 	return temp[-1][0]
 	
