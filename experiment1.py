@@ -71,30 +71,30 @@ def findError2(first, second, a, b, c, d):
 	return np.sum(logResult) 
 
 def tryOut(image1, image2):	
-  result = []
-  for a in range(-10,10):
-	for b in range(-10,10):
-		result.append([findError(image1, image2, a, b), a, b])
-  result = sorted(result, key = lambda x: x[0])
-  return result
+	result = []
+	for a in range(-10,10):
+		for b in range(-10,10):
+			result.append([findError(image1, image2, a, b), a, b])
+	result = sorted(result, key = lambda x: x[0])
+	return result
 
 def tryOut2(image1, image2):	
-  result = []
-  c = 0
-  d = 0
-  for a in range(-4,4):
-	for b in range(-4,4):
-		result.append([findError2(image1, image2, a, b, c, d), a, b, c, d])
-  result = sorted(result, key = lambda x: x[0])
-  best = result[-1]
-  a = best[1]
-  b = best[2]
-  result = []
-  for c in range(-4,4):
-  	for d in range(-4,4):
-  		result.append([findError2(image1, image2, a, b, c, d), a, b, c, d])
-  result = sorted(result, key = lambda x: x[0])
-  return result
+	result = []
+	c = 0
+	d = 0
+	for a in range(-4,4):
+		for b in range(-4,4):
+			result.append([findError2(image1, image2, a, b, c, d), a, b, c, d])
+	result = sorted(result, key = lambda x: x[0])
+	best = result[-1]
+	a = best[1]
+	b = best[2]
+	result = []
+	for c in range(-4,4):
+		for d in range(-4,4):
+			result.append([findError2(image1, image2, a, b, c, d), a, b, c, d])
+	result = sorted(result, key = lambda x: x[0])
+	return result
 
 classes = {}
 for number in xrange(10):
@@ -134,16 +134,15 @@ def classify1and2(imageNumber1, trainingExamples = 1):
 
 def main(unused_argv):
 # example image and classification, e.g. image 252  
-  image_number = 252
-  show(image_number)	
-  print(classify1and2(image_number,training_data_size)[0])
+	image_number = 252
+	show(image_number)	
+	print(classify1and2(image_number,training_data_size)[0])
 # testing 100 images
-  result = []
-  for i in range(400,500):
-  	result.append(train_labels[i]==classify1and2(i, training_data_size)[0])
-  	print(len(result))
-  	print(len([x for x in result if x == True])/len(result))
-  print(len([x for x in result if x == True])/len(result))
+	result = []
+	for i in range(400,500):
+		result.append(train_labels[i]==classify1and2(i, training_data_size)[0])
+		print(len(result))
+		print(len([x for x in result if x == True])/len(result))
 
 if __name__ == "__main__":
-  tf.app.run()
+	tf.app.run()
