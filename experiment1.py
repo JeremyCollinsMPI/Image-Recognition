@@ -14,7 +14,10 @@ tf.logging.set_verbosity(tf.logging.INFO)
 random.seed(13)
 
 # set training data size
-training_data_size = 10
+training_data_size = 100
+
+# set sampling chain length
+chain_length = 1
 
 # Load data
 mnist = tf.contrib.learn.datasets.load_dataset("mnist")
@@ -32,6 +35,7 @@ def rep(x,y):
 	for m in xrange(y):
 		new.append(x)
 	return new
+	
 def replist(x,y):
 	new=[]
 	for m in xrange(y):
@@ -54,7 +58,7 @@ def findError(first, second, a, b):
 	second = np.roll(second, a, axis = 1)
 	second = np.roll(second, b, axis = 0)
 	result = np.absolute(np.subtract(first, second))
-	result = [1 - (0.95*x)**0.2 for x in result]
+	result = [1 - (0.95*x)**0.2 for x in result]	
 	logResult = [np.log(m) for m in result]
 	return np.sum(logResult)
 
@@ -64,7 +68,7 @@ def findError2(first, second, a, b, c, d):
 	second[0] = np.roll(second[0], b, axis = 0)
 	second[1] = np.roll(second[1], c, axis = 1)
 	second[1] = np.roll(second[1], d, axis = 0)
-	second = np.concatenate((second[0], second[1]))
+	second = np.concatenate((second[0], second[1]))	
 	result = np.absolute(np.subtract(first, second))
 	result = [1 - (0.95*x)**0.2 for x in result]
 	logResult = [np.log(m) for m in result]
@@ -77,25 +81,57 @@ def tryOut(image1, image2):
 			result.append([findError(image1, image2, a, b), a, b])
 	result = sorted(result, key = lambda x: x[0])
 	return result
+	
+def tryOut(image1, image2):	
+	result = []
+	currentParameters = [0,0,0,0]
+	for i in xrange(chain_length):
+		temp1 = [] 	
+		for m in range(-5,5):
+			currentParameters[0] = m
+			temp1.append([m, findError(image1, image2, currentParameters[0], currentParameters[1])])
+		temp1 = sorted(temp1, key = lambda x : x[1], reverse = True)
+		currentParameters[0] = temp1[0][0]
+		temp1 = []
+		for m in range(-5,5):
+			currentParameters[1] = m	
+			temp1.append([m, findError(image1, image2, currentParameters[0], currentParameters[1])])
+		temp1 = sorted(temp1, key = lambda x : x[1], reverse = True)
+		currentParameters[1] = temp1[0][0]
+	current = findError(image1, image2, currentParameters[0], currentParameters[1])
+	return [[current, currentParameters[0], currentParameters[1]]]
 
 def tryOut2(image1, image2):	
 	result = []
-	c = 0
-	d = 0
-	for a in range(-4,4):
-		for b in range(-4,4):
-			result.append([findError2(image1, image2, a, b, c, d), a, b, c, d])
-	result = sorted(result, key = lambda x: x[0])
-	best = result[-1]
-	a = best[1]
-	b = best[2]
-	result = []
-	for c in range(-4,4):
-		for d in range(-4,4):
-			result.append([findError2(image1, image2, a, b, c, d), a, b, c, d])
-	result = sorted(result, key = lambda x: x[0])
-	return result
-
+	currentParameters = [0,0,0,0]
+	for i in xrange(chain_length):
+		temp1 = [] 	
+		for m in range(-4,4):
+			currentParameters[0] = m
+			temp1.append([m, findError2(image1, image2, currentParameters[0], currentParameters[1], currentParameters[2], currentParameters[3])])
+		temp1 = sorted(temp1, key = lambda x : x[1], reverse = True)
+		currentParameters[0] = temp1[0][0]
+		temp1 = []
+		for m in range(-4,4):
+			currentParameters[1] = m	
+			temp1.append([m, findError2(image1, image2, currentParameters[0], currentParameters[1], currentParameters[2], currentParameters[3])])
+		temp1 = sorted(temp1, key = lambda x : x[1], reverse = True)
+		currentParameters[1] = temp1[0][0]
+		temp1 = []
+		for m in range(-4,4):
+			currentParameters[2] = m	
+			temp1.append([m, findError2(image1, image2, currentParameters[0], currentParameters[1], currentParameters[2], currentParameters[3])])
+		temp1 = sorted(temp1, key = lambda x : x[1], reverse = True)
+		currentParameters[2] = temp1[0][0]
+		temp1 = []
+		for m in range(-4,4):
+			currentParameters[3] = m	
+			temp1.append([m, findError2(image1, image2, currentParameters[0], currentParameters[1], currentParameters[2], currentParameters[3])])
+		temp1 = sorted(temp1, key = lambda x : x[1], reverse = True)
+		currentParameters[3] = temp1[0][0]		
+	current = findError2(image1, image2, currentParameters[0], currentParameters[1], currentParameters[2], currentParameters[3])
+	return [[current, currentParameters[0], currentParameters[1], currentParameters[2], currentParameters[3]]]
+	
 classes = {}
 for number in xrange(10):
 	classes[number] = [x for x in xrange(len(train_labels)) if train_labels[x] == number]
