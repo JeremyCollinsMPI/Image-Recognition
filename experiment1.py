@@ -14,7 +14,7 @@ tf.logging.set_verbosity(tf.logging.INFO)
 random.seed(13)
 
 # set training data size
-training_data_size = 100
+training_data_size = 10
 
 # set sampling chain length
 chain_length = 1
