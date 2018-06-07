@@ -145,9 +145,56 @@ def tryAgainstRandomExample2(image1, x):
 	temp = tryOut2(image1, image2)
 	return temp[-1][0]
 	
+def estimateTranslation(image1, image2):
+	result = []
+	currentParameters = [0, 0, 0, 0]
+	for i in xrange(chain_length):
+		temp1 = [] 	
+		for m in range(-4,4):
+			currentParameters[0] = m
+			temp1.append([m, findError2(image1, image2, currentParameters[0], currentParameters[1], currentParameters[2], currentParameters[3])])
+		temp1 = sorted(temp1, key = lambda x : x[1], reverse = True)
+		currentParameters[0] = temp1[0][0]
+		temp1 = []
+		for m in range(-4,4):
+			currentParameters[1] = m	
+			temp1.append([m, findError2(image1, image2, currentParameters[0], currentParameters[1], currentParameters[2], currentParameters[3])])
+		temp1 = sorted(temp1, key = lambda x : x[1], reverse = True)
+		currentParameters[1] = temp1[0][0]
+		temp1 = []
+		for m in range(-4,4):
+			currentParameters[2] = m	
+			temp1.append([m, findError2(image1, image2, currentParameters[0], currentParameters[1], currentParameters[2], currentParameters[3])])
+		temp1 = sorted(temp1, key = lambda x : x[1], reverse = True)
+		currentParameters[2] = temp1[0][0]
+		temp1 = []
+		for m in range(-4,4):
+			currentParameters[3] = m	
+			temp1.append([m, findError2(image1, image2, currentParameters[0], currentParameters[1], currentParameters[2], currentParameters[3])])
+		temp1 = sorted(temp1, key = lambda x : x[1], reverse = True)
+		currentParameters[3] = temp1[0][0]
+	return currentParameters		
+
+def estimateTranslationGeneral(image1, x, number):
+	result = []
+	for i in xrange(number):
+		image2 = randomTrainingImage(x)
+		result.append(estimateTranslation(image1, image2))
+	return result
+
+def basicTry(image1, x, a, b):
+	image2 = training_images[str(x)+'_'+str(random.sample(xrange(training_data_size), 1)[0])]
+	return findError(image1, image2, a, b)
+
+def basicTry2(image1, x, a, b, c, d):
+	image2 = training_images[str(x)+'_'+str(random.sample(xrange(training_data_size), 1)[0])]
+	return findError2(image1, image2, a, b, c, d)
+
+def randomTrainingImage(x):
+	return training_images[str(x)+'_'+str(random.sample(xrange(training_data_size), 1)[0])]
+	
 def classify1and2(imageNumber1, trainingExamples = 1):
 	results = []
-	numericalStability = 200
 	for x in range(0,10):
 		intermediateResults = []
 		total = 0
@@ -160,15 +207,41 @@ def classify1and2(imageNumber1, trainingExamples = 1):
 		results.append(max(intermediateResults))
 	return results.index(max(results)), results	
 
+def basicClassify(imageNumber1, trainingExamples = 1):
+	results = []
+	for x in range(0,10):	
+		image1 = returnImage(imageNumber1)
+		image2 = randomTrainingImage(x)
+		number = 10
+		parametersCandidates = estimateTranslationGeneral(image1, x, number)
+		for m in xrange(len(parametersCandidates)):
+			parameters = parametersCandidates[m]
+			candidates = []
+			for i in xrange(trainingExamples):
+				image2 = training_images[str(x)+'_'+str(i)]
+				y2 = findError2(image1, image2, parameters[0], parameters[1], parameters[2], parameters[3])
+				candidates.append([i, m, y2])
+		candidates = sorted(candidates, key = lambda x : x[2], reverse = True)
+		intermediateResults = []
+		indeces = [z[0] for z in candidates[0:5]]
+		for index in indeces:
+			image2 = training_images[str(x)+'_'+str(index)]		
+			y = tryOut2(image1, image2)[0]
+			y2 = tryOut(image1, image2)[0]
+			y = max(y, y2)
+			intermediateResults.append(y)
+		results.append(max(intermediateResults))
+	return results.index(max(results)), results	 
+
 def main(unused_argv):
 # example image and classification, e.g. image 252  
 	image_number = 252
 	show(image_number)	
-	print(classify1and2(image_number,training_data_size)[0])
+	print(basicClassify(image_number,training_data_size)[0])
 # testing 100 images
 	result = []
 	for i in range(400,500):
-		result.append(train_labels[i]==classify1and2(i, training_data_size)[0])
+		result.append(train_labels[i]==basicClassify(i, training_data_size)[0])		
 		print(len(result))
 		print(len([x for x in result if x == True])/len(result))
 
