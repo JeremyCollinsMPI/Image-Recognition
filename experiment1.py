@@ -73,14 +73,6 @@ def findError2(first, second, a, b, c, d):
 	result = [1 - (0.95*x)**0.2 for x in result]
 	logResult = [np.log(m) for m in result]
 	return np.sum(logResult) 
-
-def tryOut(image1, image2):	
-	result = []
-	for a in range(-10,10):
-		for b in range(-10,10):
-			result.append([findError(image1, image2, a, b), a, b])
-	result = sorted(result, key = lambda x: x[0])
-	return result
 	
 def tryOut(image1, image2):	
 	result = []
